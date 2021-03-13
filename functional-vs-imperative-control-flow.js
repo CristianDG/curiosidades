@@ -38,7 +38,7 @@ const mail = {
 // FIM DOS MOCKS
 
 const input = "11"
-const funcional = true
+const functional = true
 
 // Parte Imperativa
 function parseIdI(s){
