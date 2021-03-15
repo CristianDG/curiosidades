@@ -177,7 +177,11 @@ async function mainF(){
         .flatMap( async user => (await sendEmailF(user.email, "Olá")))
 
     middleRes
-        .map( _ => console.log("email enviado com sucesso"))
+        .map( res =>
+            console.log(
+                res
+                    ? "email enviado com sucesso"
+                    : "o email não foi enviado"))
         .mapErr(console.error)
 }
 
