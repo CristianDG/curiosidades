@@ -129,7 +129,7 @@
                (combinations 
                  (map (lambda (i)
                         (map int->bool
-                             (to-fixed-length (-1+ combination-size)
+                             (to-fixed-length (length vars)
                                               (to-binary-list i))))
                       (0-to combination-size)))
                (envs (map (lambda (l) (map cons vars l)) combinations)))
@@ -224,6 +224,8 @@
 ;
 ; no lugar de comparar por simbolos usar um predicado,
 ; assim da pra adicionar simbolos facilmente: FEITO
+;
+; RESOLVER o erro de mais de 2 variaveis e 1 variavel: RESOLVIDO
 
 (define teste-1 '((0 ∨ 1) ∧ 1))                             ; (#t)
 (define teste-2 '(0 ∨ 1 ∧ 1))                               ; (#t)
@@ -233,6 +235,7 @@
 (define teste-6 '(not (1 or 0)))                            ; (#f)
 (define teste-7 '(((not P) and (not Q)) = (not (P or Q))))  ; (#t #t #t #t)
 (define teste-8 '(not (true or false)))                     ; (#f)
+(define teste-9 '(p or not p))
 
 
 (define (run-tests)
@@ -247,6 +250,7 @@
          teste-5
          teste-6
          teste-7
-         teste-8)))
+         teste-8
+         teste-9)))
 
 (run-tests)
