@@ -106,14 +106,14 @@
     (else (error "erro!"))))
 ;(trace eval-tree)
 
-(define (eval-logic tokens)
-  (eval-tree (make-tree tokens precedence-list) consts))
+;(define (eval-logic tokens)
+;  (eval-tree (make-tree tokens precedence-list) '()))
 
-(define (eval-with-vars tokens truth-table)
+(define (eval-logic tokens truth-table)
   (map (lambda (enviroment)
          (let ((result (eval-tree
                          (make-tree tokens precedence-list)
-                         (append consts enviroment))))
+                         enviroment)))
            (if truth-table 
                (list enviroment result)
                result)))
@@ -159,13 +159,14 @@
          (lset-union eq?
                      (find-variables (car tree) )
                      (find-variables (cdr tree) )))
-        ((not (or (true-symbol? (car tree))
-                  (false-symbol? (car tree))
-                  (not-symbol? (car tree))
-                  (and-symbol? (car tree))
-                  (or-symbol? (car tree))
-                  (directional-symbol? (car tree))
-                  (bidirectional-symbol? (car tree))))
+        ((not (let ((symbol (car tree)))
+                (or (true-symbol? symbol)
+                    (false-symbol? symbol)
+                    (not-symbol? symbol)
+                    (and-symbol? symbol)
+                    (or-symbol? symbol)
+                    (directional-symbol? symbol)
+                    (bidirectional-symbol? symbol))))
          (lset-union eq?
                      (list (car tree))
                      (find-variables (cdr tree) )))
@@ -224,12 +225,28 @@
 ; no lugar de comparar por simbolos usar um predicado,
 ; assim da pra adicionar simbolos facilmente: FEITO
 
-(define teste-1 '((0 ∨ 1) ∧ 1)) ; #t
-(define teste-2 '(0 ∨ 1 ∧ 1)) ; #t
-(define teste-3 '(((~ P) ∧ (~ Q)) = (~ (P ∨ Q)))) ; (#t #t #t #t)
-(define teste-4 '(~ (1 ∨ 0)))
-(define teste-5 '(~ (p ∨ q)))
-(define teste-6 '(not (1 or 0)))
-(define teste-7 '(((not P) and (not Q)) = (not (P or Q))))
+(define teste-1 '((0 ∨ 1) ∧ 1))                             ; (#t)
+(define teste-2 '(0 ∨ 1 ∧ 1))                               ; (#t)
+(define teste-3 '(((~ P) ∧ (~ Q)) = (~ (P ∨ Q))))           ; (#t #t #t #t)
+(define teste-4 '(~ (1 ∨ 0)))                               ; (#f)
+(define teste-5 '(~ (p ∨ q)))                               ; (#t #f #f #f)
+(define teste-6 '(not (1 or 0)))                            ; (#f)
+(define teste-7 '(((not P) and (not Q)) = (not (P or Q))))  ; (#t #t #t #t)
+(define teste-8 '(not (true or false)))                     ; (#f)
 
 
+(define (run-tests)
+  (display "\nrunning tests...\n")
+  (for-each (lambda (test)
+         (pp (eval-logic test #f)))
+       (list
+         teste-1
+         teste-2
+         teste-3
+         teste-4
+         teste-5
+         teste-6
+         teste-7
+         teste-8)))
+
+(run-tests)
