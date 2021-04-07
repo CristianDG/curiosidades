@@ -9,25 +9,25 @@
       (reverse (cdr (reverse lst)))))
 
 (define (true-symbol? s)
-  (member? s '(1 true ~0 ¬0)))
+  (member? s '(1 true ~0 ¬0 ~false ¬false)))
 
 (define (false-symbol? s)
-  (member? s '(0 false ~1 ¬1)))
+  (member? s '(0 false ~1 ¬1 ~true ¬true)))
 
 (define (not-symbol? s)
-  (member? s '(~ ¬ not)))
+  (member? s '(~ ¬ not não)))
 
 (define (and-symbol? s)
-  (member? s '(∧ and ^)))
+  (member? s '(∧ and ^ e &&)))
 
 (define (or-symbol? s)
-  (member? s '(∨ or v)))
+  (member? s '(∨ or v ou ||)))
 
 (define (directional-symbol? s)
-  (member? s '(-> →)))
+  (member? s '(-> → implica)))
 
 (define (bidirectional-symbol? s)
-  (member? s '(= <-> ↔)))
+  (member? s '(= <-> ↔ bicondicional)))
 
 
 ;criar uma syntax tree
