@@ -38,7 +38,8 @@ const mail = {
 // FIM DOS MOCKS
 
 const input = "11"
-const functional = true
+// 1 para mainI1 - 2 para mainI2 - 3 para mainF
+const version = 3
 
 // Parte Imperativa
 function parseIdI(s){
@@ -74,7 +75,8 @@ async function sendEmailI(email, message){
     }
 }
 
-async function mainI(){
+async function mainI1(){
+    console.log("## mainI1 ##")
     const id = parseIdI(input)
     if(id !== null){
         const user = getUserI(id)
@@ -91,6 +93,33 @@ async function mainI(){
     }else{
         console.error("o id não é um numero")
     }
+}
+
+// versão sem else com "early returns"
+async function mainI2(){
+    console.log("## mainI2 ##")
+    const id = parseIdI(input)
+
+    if(id === null){
+        console.error("o id não é um numero")
+        return;
+    }
+
+    const user = getUserI(id)
+
+    if(user === null){
+        console.error("usuário não foi encontrado")
+        return;
+    }
+
+    const res = await sendEmailI(user.email, "Olá")
+
+    if (!res){
+        console.error("o email não foi enviado")
+        return;
+    }
+
+    console.log("email enviado com sucesso")
 }
 
 
@@ -172,6 +201,7 @@ async function sendEmailF(email, message){
 }
 
 async function mainF(){
+    console.log("## mainF ##")
     const middleRes = await parseIdF(input)
         .flatMap(getUserF)
         .flatMap( async user => (await sendEmailF(user.email, "Olá")))
@@ -186,4 +216,4 @@ async function mainF(){
 }
 
 // Main
-(async () => await functional ? mainF() : mainI())()
+(async () => await [mainI1, mainI2, mainF][version - 1]() )()
