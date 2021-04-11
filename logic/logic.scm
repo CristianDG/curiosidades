@@ -1,36 +1,61 @@
 
 ; helper functions
-
-; não gostei dessa função
-(define (member? s l)
-  (if (member s l) #t #f))
-
 (define (init lst)
   (if (null? lst)
       '()
       (reverse (cdr (reverse lst)))))
 
-(define (true-symbol? s)
-  (member? s '(1 true ~0 ¬0 ~false ¬false)))
+(define (true-symbol s)
+  (if (member s '(1 true ~0 ¬0 ~false ¬false))
+      'true
+      #f))
 
-(define (false-symbol? s)
-  (member? s '(0 false ~1 ¬1 ~true ¬true)))
+(define (false-symbol s)
+  (if (member s '(0 false ~1 ¬1 ~true ¬true))
+      'false
+      #f))
 
-(define (not-symbol? s)
-  (member? s '(~ ¬ not não)))
+(define (not-symbol s)
+  (if (member s '(~ ¬ not não))
+      (lambda (r) (not r))
+      #f))
 
-(define (and-symbol? s)
-  (member? s '(∧ and ^ e &&)))
+(define (and-symbol s)
+  (if (member s '(∧ and ^ e &&))
+      (lambda (l r) (and l r))
+      #f))
 
-(define (or-symbol? s)
-  (member? s '(∨ or v ou ||)))
+(define (or-symbol s)
+  (if (member s '(∨ or v ou ||))
+      (lambda (l r) (or l r))
+      #f))
 
-(define (directional-symbol? s)
-  (member? s '(-> → implica)))
+(define (directional-symbol s)
+  (if (member s '(-> → implica))
+      (lambda (l r) (if l r #t))
+      #f))
 
-(define (bidirectional-symbol? s)
-  (member? s '(= <-> ↔ bicondicional)))
+(define (bidirectional-symbol s)
+  (if (member s '(= <-> ↔ bicondicional))
+      (lambda (l r) (eq? l r))
+      #f))
 
+(define (xor-symbol s)
+  (if (member s '(xor))
+      (lambda (l r) (not (eq? l r)))
+      #f))
+
+(define (eval-symbol s)
+  (cond
+    ((true-symbol s))
+    ((false-symbol s))
+    ((not-symbol s))
+    ((and-symbol s))
+    ((or-symbol s))
+    ((directional-symbol s))
+    ((bidirectional-symbol s))
+    ((xor-symbol s))
+    (else #f)))
 
 ;criar uma syntax tree
 ;
@@ -83,17 +108,16 @@
     or-symbol?
     and-symbol?))
 
+(define (symbol->bool s)
+  (cond ((true-symbol s) #t)
+        ((false-symbol s) #f)
+        (else s)))
+
 (define (eval-tree tree env)
   (cond
      ; se for um atomo
     ((assoc tree env) (cdr (assoc tree env)))
-    ((true-symbol? tree)          #t)
-    ((false-symbol? tree)         #f)
-    ((not-symbol? tree)           (lambda (r) (not r)))
-    ((and-symbol? tree)           (lambda (l r) (and l r)))
-    ((or-symbol? tree)            (lambda (l r) (or l r)))
-    ((directional-symbol? tree)   (lambda (l r) (if l r #t)))
-    ((bidirectional-symbol? tree) (lambda (l r) (eq? l r)))
+    ((eval-symbol tree) (symbol->bool (eval-symbol tree)))
     ((list? tree)
            ; se for uma lista contendo uma lista
      (cond ((= 1 (length tree)) (eval-tree (car tree) env))
@@ -115,7 +139,7 @@
   (map (lambda (enviroment)
          (let ((result (eval-tree
                          (make-tree tokens precedence-list)
-                         enviroment)))
+                         (append `((,(true-symbol true) . #t) (,(false-symbol false) . #f)) enviroment))))
            (if truth-table 
                (list enviroment result)
                result)))
@@ -161,14 +185,7 @@
          (lset-union eq?
                      (find-variables (car tree) )
                      (find-variables (cdr tree) )))
-        ((not (let ((symbol (car tree)))
-                (or (true-symbol? symbol)
-                    (false-symbol? symbol)
-                    (not-symbol? symbol)
-                    (and-symbol? symbol)
-                    (or-symbol? symbol)
-                    (directional-symbol? symbol)
-                    (bidirectional-symbol? symbol))))
+        ((not (eval-symbol (car tree)))
          (lset-union eq?
                      (list (car tree))
                      (find-variables (cdr tree) )))
@@ -229,7 +246,7 @@
 ;
 ; RESOLVER o erro de mais de 2 variaveis e 1 variavel: RESOLVIDO
 ;
-; adicionar xor
+; adicionar xor: FEITO
 
 (define teste-1 '((0 ∨ 1) ∧ 1))                             ; (#t)
 (define teste-2 '(0 ∨ 1 ∧ 1))                               ; (#t)
@@ -243,7 +260,7 @@
 
 
 (define (run-tests)
-  (display "\nrunning tests...\n")
+  (display "\n;Running tests ...\n")
   (for-each (lambda (test)
          (pp (eval-logic test #f)))
        (list
