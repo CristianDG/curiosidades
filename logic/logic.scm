@@ -1,4 +1,8 @@
 
+(define (set-union s1 s2)
+  (append s1 (filter (lambda (item)
+                       (not (member item s1))) s2)))
+
 ; helper functions
 (define (init lst)
   (if (null? lst)
@@ -70,12 +74,12 @@
   (define (aux left right operator?)
     (cond
       ((null? right) left)
-      ((not-symbol? (car right))
+      ((not-symbol (car right))
        (aux (append left (list (list (car right) (cadr right))))
             (cddr right)
             operator?))
       ((operator? (car right))
-       (if (not-symbol? (cadr right))
+       (if (not-symbol (cadr right))
            (aux
              (append
                (init left)
@@ -103,10 +107,11 @@
 
 (define precedence-list
   (list
-    directional-symbol?
-    bidirectional-symbol?
-    or-symbol?
-    and-symbol?))
+    directional-symbol
+    bidirectional-symbol
+    xor-symbol
+    or-symbol
+    and-symbol))
 
 (define (symbol->bool s)
   (cond ((true-symbol s) #t)
@@ -182,13 +187,11 @@
 (define (find-variables tree )
   (cond ((null? tree) '())
         ((list? (car tree))
-         (lset-union eq?
-                     (find-variables (car tree) )
-                     (find-variables (cdr tree) )))
+         (set-union (find-variables (car tree) )
+                    (find-variables (cdr tree) )))
         ((not (eval-symbol (car tree)))
-         (lset-union eq?
-                     (list (car tree))
-                     (find-variables (cdr tree) )))
+         (set-union (list (car tree))
+                    (find-variables (cdr tree) )))
         (else (find-variables (cdr tree) ))))
 
 ; (0-to 3) => (0 1 2 3)
