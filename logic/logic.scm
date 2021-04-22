@@ -128,12 +128,11 @@
      (cond ((= 1 (length tree)) (eval-tree (car tree) env))
            ; se for uma lista contendo um ~
            ((= 2 (length tree)) ((eval-tree (car tree) env)
-                                   (eval-tree (cadr tree) env)))
+                                 (eval-tree (cadr tree) env)))
            ; se for uma lista de 3 argumentos:
            ; 2 expressões e 1 operador
-           (else ((eval-tree (cadr tree) env)
-                    (eval-tree (car tree) env)
-                    (eval-tree (caddr tree) env)))))
+           (else ((eval-tree (cadr tree) env) (eval-tree (car tree) env)
+                                              (eval-tree (caddr tree) env)))))
     (else (error "erro!"))))
 ;(trace eval-tree)
 
@@ -179,20 +178,22 @@
 
 
 (define (to-fixed-length n lst)
-  (cond ((= n (length lst)) lst)
-        ((> n (length lst)) (to-fixed-length n (cons 0 lst)))
-        ((< n (length lst)) (to-fixed-length n (cdr lst)))))
+  (cond
+    ((= n (length lst)) lst)
+    ((> n (length lst)) (to-fixed-length n (cons 0 lst)))
+    ((< n (length lst)) (to-fixed-length n (cdr lst)))))
 
 
 (define (find-variables tree )
-  (cond ((null? tree) '())
-        ((list? (car tree))
-         (set-union (find-variables (car tree) )
-                    (find-variables (cdr tree) )))
-        ((not (eval-symbol (car tree)))
-         (set-union (list (car tree))
-                    (find-variables (cdr tree) )))
-        (else (find-variables (cdr tree) ))))
+  (cond
+    ((null? tree) '())
+    ((list? (car tree))
+     (set-union (find-variables (car tree) )
+                (find-variables (cdr tree) )))
+    ((not (eval-symbol (car tree)))
+     (set-union (list (car tree))
+                (find-variables (cdr tree) )))
+    (else (find-variables (cdr tree) ))))
 
 ; (0-to 3) => (0 1 2 3)
 (define (0-to n)
