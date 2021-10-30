@@ -73,12 +73,57 @@ em alguns casos é necessário manter na memória a fila de execução.
 
 ### Recursão em cauda
 
+A recursão em cauda é quando a chamada recursiva é a única parte do retorno,
+normalmente acompanhada de uma função auxiliar definida dentro ou fora da propria função.
+
 Pros:
 - A memoria não acumula
 
 Contras:
 - Só existe uma ordem de execução
 - É um pouco mais complicado de escrever
+
+#### Exemplos
+
+Fatorial:
+
+```py
+def fatorial(x):
+    # chamada do auxiliar
+    return fatorial_auxiliar(x,1)
+
+# para a função ser considerada em cauda
+# necessita de pelomenos um argumento que vai servir de acumulador
+def fatorial_auxiliar(x, acc):
+    # caso base
+    if x == 0:
+        return acc
+    else:
+        # caso de redução
+        return fatorial_auxiliar(x-1, acc * x)
+```
+```hs
+fatorial x = fatorialAuxiliar x 1
+
+-- caso base
+fatorialAuxiliar 0 acc = acc
+-- caso de redução
+fatorialAuxiliar x acc = fatorialAuxiliar (x-1) (acc*x)
+```
+Bora analizar a memoria de `fatorial(5)` agora:
+
+```
+fatorial(5)
+-> fatorial_auxiliar(5,1)
+-> fatorial_auxiliar(4,5)
+-> fatorial_auxiliar(3,20)
+-> fatorial_auxiliar(2,60)
+-> fatorial_auxiliar(1,120)
+-> fatorial_auxiliar(0,120)
+-> 120
+```
+
+Nesse caso essa função não faz a memoria crescer, podendo funcionar para entradas muito maiores.
 
 ## Outros assuntos (Wip)
 - Recrusão é um assunto muito importante principalmente no paradígma funcional.
