@@ -1,0 +1,23 @@
+
+# Recursividade
+
+## O que é:
+
+É um modo de resolver problemas dividindo eles em problemas menores
+
+## Como funciona?
+
+Simplesmente chamando a função na sua propria definição. *(existem outros modos mas esse é o mais simples)*
+
+## Tipos:
+
+Existem vários tipos de recursão, os mais famosos são **Simples** e **Em cauda**
+
+## Exemplos:
+
+### Fatorial
+
+
+## Wip
+- Recrusão é um assunto muito importante principalmente no paradígma funcional.
+- É equivalente aos iteradores (for, while)
