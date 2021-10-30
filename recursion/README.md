@@ -9,6 +9,17 @@
 
 Simplesmente chamando a função na sua propria definição. *(existem outros modos mas esse é o mais simples)*
 
+## Como pensar de uma forma recursiva?
+
+Tem 2 coisas que tem que ser definidas para criar uma função recursiva:
+os **casos base** e os **casos de redução** (não é necessário ter mais de um)
+
+O caso base é o caso mais simples possível, ele não pode ser reduzido, esse caso não apresenta chamadas recursivas.
+
+O caso de redução é aquele que tende ao caso base, normalmente reduzindo o valor da entrada, aqui onde vai ficar a chamada recursiva.
+
+Um exemplo simples seria a função fatorial, onde x! = x * (x-1)! e 0! = 1. O caso base é 0! = 1 e o caso de redução é x! = x * (x-1)!
+
 ## Casos de uso:
 
 Recursão pode ser usada principalmente para resolver problemas de um tamanho não especificado *(mesma ideia de um while)*.
