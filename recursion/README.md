@@ -18,7 +18,7 @@ O caso base é o caso mais simples possível, ele não pode ser reduzido, esse c
 
 O caso de redução é aquele que tende ao caso base, normalmente reduzindo o valor da entrada, aqui onde vai ficar a chamada recursiva.
 
-Um exemplo simples seria a função fatorial, onde x! = x * (x-1)! e 0! = 1. O caso base é 0! = 1 e o caso de redução é x! = x * (x-1)!
+Um exemplo simples seria a função fatorial, onde `x! = x * (x-1)!` e `0! = 1`. O caso base é `0! = 1` e o caso de redução é `x! = x * (x-1)!`.
 
 ## Casos de uso:
 
